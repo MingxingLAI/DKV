@@ -15,20 +15,25 @@
  * limitations under the License.
  */
 
-package org.apache.dkv.server;
+package org.apache.dkv.storage.bean;
 
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import org.apache.dkv.storage.bytes.Bytes;
 import org.junit.Test;
 
-/**
- * Unit test for simple App.
- */
-public class AppTest {
-    /**
-     * Rigorous Test :-)
-     */
+public class KeyValuePairTest {
+    
     @Test
-    public void shouldAnswerWithTrue() {
-        assertTrue(true);
+    public void testCompare() {
+        KeyValuePair kv = KeyValuePair.createPut(Bytes.toBytes(100), Bytes.toBytes(1000), 0L);
+        assertThat(kv, notNullValue());
+        assertThat(kv, not(new Object()));
+        assertThat(KeyValuePair.createPut(Bytes.toBytes(100), Bytes.toBytes(1000), 0L), equalTo(kv));
+        assertThat(KeyValuePair.createPut(Bytes.toBytes(100L), Bytes.toBytes(1000), 0L), not(equalTo(kv)));
+        assertThat(KeyValuePair.createPut(Bytes.toBytes(100), Bytes.toBytes(1000L), 0L), equalTo(kv));
     }
+    
 }
