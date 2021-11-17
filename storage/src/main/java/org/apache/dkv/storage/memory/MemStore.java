@@ -35,6 +35,7 @@ import org.apache.dkv.storage.iterator.SeekIterator;
 @Slf4j
 public final class MemStore {
     
+    @Getter
     private final AtomicLong dataSize = new AtomicLong();
     
     @Getter

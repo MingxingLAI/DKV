@@ -24,5 +24,4 @@ import org.apache.dkv.storage.iterator.Iterator;
 public interface Flusher {
     
     void flush(Iterator<KeyValuePair> it) throws IOException;
-    
 }

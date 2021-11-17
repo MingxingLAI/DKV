@@ -18,6 +18,7 @@
 package org.apache.dkv.storage.config;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,19 +26,20 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class Config {
 
     private static final Config DEFAULT = new Config();
 
-    private final long maxMemstoreSize = 16 * 1024 * 1024;
+    private long maxMemstoreSize = 16 * 1024 * 1024;
     
-    private final int flushMaxRetries = 10;
+    private int flushMaxRetries = 10;
     
-    private final String dataDir = "dkv";
+    private String dataDir = "dkv";
     
-    private final int maxDiskFiles = 10;
+    private int maxDiskFiles = 10;
     
-    private final int maxThreadPoolSize = 5;
+    private int maxThreadPoolSize = 5;
     
     public static Config getDefault() {
         return DEFAULT;

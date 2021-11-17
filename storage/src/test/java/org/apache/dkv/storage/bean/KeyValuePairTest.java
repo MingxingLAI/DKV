@@ -21,7 +21,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-
 import java.io.IOException;
 import org.apache.dkv.storage.bean.KeyValuePair.OperationType;
 import org.apache.dkv.storage.bytes.Bytes;
