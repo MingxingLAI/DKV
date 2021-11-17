@@ -18,9 +18,11 @@
 package org.apache.dkv.storage.flush;
 
 import java.io.IOException;
-import java.util.Iterator;
 import org.apache.dkv.storage.bean.KeyValuePair;
+import org.apache.dkv.storage.iterator.Iterator;
 
 public interface Flusher {
+    
     void flush(Iterator<KeyValuePair> it) throws IOException;
+    
 }

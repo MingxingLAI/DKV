@@ -23,29 +23,35 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dkv.storage.bean.KeyValuePair;
 import org.apache.dkv.storage.config.Config;
 import org.apache.dkv.storage.flush.Flusher;
+import org.apache.dkv.storage.iterator.IteratorWrapper;
+import org.apache.dkv.storage.iterator.MemStoreIterator;
+import org.apache.dkv.storage.iterator.SeekIterator;
 
 @Slf4j
 public final class MemStore {
     
     private final AtomicLong dataSize = new AtomicLong();
     
+    @Getter
     private volatile ConcurrentSkipListMap<KeyValuePair, KeyValuePair> kvMap;
     
+    @Getter
     private volatile ConcurrentSkipListMap<KeyValuePair, KeyValuePair> snapshot;
     
     private final ReentrantReadWriteLock updateLock = new ReentrantReadWriteLock();
     
     private final AtomicBoolean isSnapshotFlushing = new AtomicBoolean(false);
     
-    private ExecutorService pool;
+    private final ExecutorService pool;
     
-    private Config conf;
+    private final Config conf;
     
-    private Flusher flusher;
+    private final Flusher flusher;
     
     public MemStore(final Config conf, final Flusher flusher, final ExecutorService pool) {
         this.conf = conf;
@@ -71,6 +77,15 @@ public final class MemStore {
             updateLock.readLock().unlock();
         }
         flushIfNeeded(false);
+    }
+
+    /**
+     * crate iterator to visit MemStore.
+     * @return iterator.
+     * @throws IOException
+     */
+    public SeekIterator<KeyValuePair> createIterator() throws IOException {
+        return new MemStoreIterator(this);
     }
     
     private void flushIfNeeded(final boolean shouldBlockingUpdate) throws IOException {
@@ -103,7 +118,7 @@ public final class MemStore {
             boolean isSuccess = false;
             for (int i = 0; i < conf.getFlushMaxRetries(); i++) {
                 try {
-                    // flush
+                    flusher.flush(new IteratorWrapper(snapshot));
                     isSuccess = true;
                 } catch (Exception e) {
                     log.error("Failed to flush memstore, retries= {} , maxFlushRetries= {}, {}", i, conf.getFlushMaxRetries(), e);
@@ -112,6 +127,7 @@ public final class MemStore {
                     }
                 }
             }
+            // clean the snapshot
             if (isSuccess) {
                 snapshot = null;
                 isSnapshotFlushing.compareAndSet(true, false);
