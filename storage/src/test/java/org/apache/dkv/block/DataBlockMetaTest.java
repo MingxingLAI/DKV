@@ -28,7 +28,7 @@ import org.junit.Test;
 public class DataBlockMetaTest {
     
     @Test
-    public void testBlockMeta() throws IOException {
+    public void testDataBlockMeta() throws IOException {
         KeyValuePair lastKv = KeyValuePair.createPut(Bytes.toBytes("abc"), Bytes.toBytes("abc"), 1L);
         long offset = 1024;
         long size = 1024;
