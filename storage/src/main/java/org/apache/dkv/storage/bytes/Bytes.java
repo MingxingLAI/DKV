@@ -105,8 +105,8 @@ public final class Bytes {
 
     public static byte[] slice(final byte[] buf, final int offset, final int len) {
         Preconditions.checkNotNull(buf, "buffer is null");
-        Preconditions.checkArgument(offset < 0 || len < 0, "Invalid offset: " + offset + " or len: " + len);
-        Preconditions.checkArgument(offset + len > buf.length, "Buffer overflow, offset: " + offset + ", len: " + len + ", buf.length:" + buf.length);
+        Preconditions.checkArgument(offset >= 0 && len >= 0, "Invalid offset: " + offset + " or len: " + len);
+        Preconditions.checkArgument(offset + len <= buf.length, "Buffer overflow, offset: " + offset + ", len: " + len + ", buf.length:" + buf.length);
         byte[] result = new byte[len];
         System.arraycopy(buf, offset, result, 0, len);
         return result;

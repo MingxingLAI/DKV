@@ -21,6 +21,9 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+
+import java.io.IOException;
+import org.apache.dkv.storage.bean.KeyValuePair.OperationType;
 import org.apache.dkv.storage.bytes.Bytes;
 import org.junit.Test;
 
@@ -35,5 +38,30 @@ public class KeyValuePairTest {
         assertThat(KeyValuePair.createPut(Bytes.toBytes(100L), Bytes.toBytes(1000), 0L), not(equalTo(kv)));
         assertThat(KeyValuePair.createPut(Bytes.toBytes(100), Bytes.toBytes(1000L), 0L), equalTo(kv));
     }
+
+    @Test
+    public void testCreateKeyValuePair() {
+        KeyValuePair addedKeyValuePair = KeyValuePair.create(Bytes.toBytes("name"), Bytes.toBytes("dvk"), OperationType.Put, 10);
+        assertThat(KeyValuePair.createPut(Bytes.toBytes("name"), Bytes.toBytes("dkv"), 10), equalTo(addedKeyValuePair));
+
+        KeyValuePair deletedKeyValuePair = KeyValuePair.create(Bytes.toBytes("name"), Bytes.EMPTY_BYTES, OperationType.Delete, 11);
+        assertThat(KeyValuePair.createDelete(Bytes.toBytes("name"), 11), equalTo(deletedKeyValuePair));
+    }
     
+    @Test
+    public void testToBytes() throws IOException {
+        KeyValuePair keyValuePair = KeyValuePair.create(Bytes.toBytes("name"), Bytes.toBytes("dvk"), OperationType.Put, 10);
+        byte[] result = keyValuePair.toBytes();
+        KeyValuePair actual = KeyValuePair.parseFrom(result);
+        assertThat(actual.getKey(), equalTo(keyValuePair.getKey()));
+        assertThat(actual.getValue(), equalTo(keyValuePair.getValue()));
+        assertThat(actual.getOperationType(), equalTo(keyValuePair.getOperationType()));
+        assertThat(actual.getSequenceId(), equalTo(keyValuePair.getSequenceId()));
+    }
+    
+    @Test
+    public void testGetSerializeSize() {
+        KeyValuePair keyValuePair = KeyValuePair.create(Bytes.toBytes(1), Bytes.toBytes(1), OperationType.Put, 1);
+        assertThat(keyValuePair.getSerializeSize(), equalTo(4 + 4 + 8 + 1 + 4 + 4));
+    }
 }

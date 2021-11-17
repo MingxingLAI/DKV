@@ -17,6 +17,7 @@
 
 package org.apache.dkv.storage.bean;
 
+import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.util.Comparator;
 import lombok.Getter;
@@ -26,19 +27,19 @@ import org.apache.dkv.storage.bytes.Bytes;
 public final class KeyValuePair implements Comparable<KeyValuePair> {
 
     public static final int RAW_KEY_LEN_SIZE = 4;
-    
+
     public static final int VAL_LEN_SIZE = 4;
-    
+
     public static final int OP_SIZE = 1;
-    
+
     public static final int SEQ_ID_SIZE = 8;
 
     private final byte[] key;
-    
+
     private final byte[] value;
-    
+
     private final OperationType operationType;
-    
+
     private final long sequenceId;
 
     public enum OperationType {
@@ -77,11 +78,11 @@ public final class KeyValuePair implements Comparable<KeyValuePair> {
         this.operationType = operationType;
         this.sequenceId = sequenceId;
     }
-    
+
     public static KeyValuePair create(final byte[] key, final byte[] value, final OperationType operationType, final long sequenceId) {
         return new KeyValuePair(key, value, operationType, sequenceId);
     }
-    
+
     public static KeyValuePair createPut(final byte[] key, final byte[] value, final long sequenceId) {
         return KeyValuePair.create(key, value, OperationType.Put, sequenceId);
     }
@@ -89,7 +90,7 @@ public final class KeyValuePair implements Comparable<KeyValuePair> {
     public static KeyValuePair createDelete(final byte[] key, final long sequenceId) {
         return KeyValuePair.create(key, Bytes.EMPTY_BYTES, OperationType.Delete, sequenceId);
     }
-    
+
     private int getRawKeyLen() {
         return key.length + OP_SIZE + SEQ_ID_SIZE;
     }
@@ -172,9 +173,7 @@ public final class KeyValuePair implements Comparable<KeyValuePair> {
     }
 
     public static KeyValuePair parseFrom(final byte[] bytes, final int offset) throws IOException {
-        if (bytes == null) {
-            throw new IOException("buffer is null");
-        }
+        Preconditions.checkNotNull(bytes, "buff is null");
         if (offset + RAW_KEY_LEN_SIZE + VAL_LEN_SIZE >= bytes.length) {
             throw new IOException("Invalid offset or len. offset: " + offset + ", len: " + bytes.length);
         }
@@ -210,6 +209,7 @@ public final class KeyValuePair implements Comparable<KeyValuePair> {
     }
 
     private static class KeyValueComparator implements Comparator<KeyValuePair> {
+
         @Override
         public int compare(final KeyValuePair a, final KeyValuePair b) {
             if (a == b) {
