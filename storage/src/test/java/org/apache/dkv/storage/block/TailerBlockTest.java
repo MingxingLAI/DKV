@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-package org.apache.dkv.block;
+package org.apache.dkv.storage.block;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import org.apache.dkv.storage.block.TailerBlock;
+
 import org.junit.Test;
 
 public class TailerBlockTest {

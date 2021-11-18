@@ -15,13 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.dkv.block;
+package org.apache.dkv.storage.block;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import java.io.IOException;
 import org.apache.dkv.storage.bean.KeyValuePair;
-import org.apache.dkv.storage.block.DataBlockMeta;
 import org.apache.dkv.storage.bytes.Bytes;
 import org.junit.Test;
 
