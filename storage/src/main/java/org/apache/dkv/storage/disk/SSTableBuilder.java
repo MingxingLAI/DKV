@@ -26,7 +26,7 @@ import java.io.IOException;
 import lombok.Getter;
 import org.apache.dkv.storage.bean.KeyValuePair;
 import org.apache.dkv.storage.block.DataBlock;
-import org.apache.dkv.storage.block.DataBlockMetaBuilder;
+import org.apache.dkv.storage.block.IndexBlockBuilder;
 import org.apache.dkv.storage.block.TailerBlock;
 
 public final class SSTableBuilder implements Closeable {
@@ -42,7 +42,7 @@ public final class SSTableBuilder implements Closeable {
     private long fileSize;
     
     @Getter
-    private final DataBlockMetaBuilder dataBlockMetaBuilder;
+    private final IndexBlockBuilder indexBlockBuilder;
     
     @Getter
     private DataBlock currentDataBlock;
@@ -62,7 +62,7 @@ public final class SSTableBuilder implements Closeable {
         Preconditions.checkState(isExists, "%s is exists.", fileName);
         outputStream = new FileOutputStream(f, true);
         currentOffset = 0;
-        dataBlockMetaBuilder = new DataBlockMetaBuilder();
+        indexBlockBuilder = new IndexBlockBuilder();
         currentDataBlock = new DataBlock();
     }
 
@@ -90,8 +90,8 @@ public final class SSTableBuilder implements Closeable {
         
         byte[] buffer = currentDataBlock.serialize();
         outputStream.write(buffer);
-        // save meta info into DataBlockMeta
-        dataBlockMetaBuilder.append(currentDataBlock.getLastKv(), currentOffset, buffer.length, currentDataBlock.getBloomFilter());
+        // save index info into DataBlockMeta
+        indexBlockBuilder.append(currentDataBlock.getLastKv(), currentOffset, buffer.length, currentDataBlock.getBloomFilter());
         
         currentOffset += buffer.length;
         blockCount += 1;
@@ -110,7 +110,7 @@ public final class SSTableBuilder implements Closeable {
             switchNextDataBlock();
         }
         
-        byte[] buffer = dataBlockMetaBuilder.serialize();
+        byte[] buffer = indexBlockBuilder.serialize();
         dataBlockMetaOffset = currentOffset;
         dataBlockMetaSize = buffer.length;
         outputStream.write(buffer);

@@ -24,7 +24,7 @@ import org.apache.dkv.storage.bean.KeyValuePair;
 import org.apache.dkv.storage.bytes.Bytes;
 import org.junit.Test;
 
-public class DataBlockMetaTest {
+public class IndexBlockTest {
     
     @Test
     public void testDataBlockMeta() throws IOException {
@@ -32,12 +32,12 @@ public class DataBlockMetaTest {
         long offset = 1024;
         long size = 1024;
         byte[] bloomFilter = Bytes.toBytes("bloomFilter");
-        DataBlockMeta meta = new DataBlockMeta(lastKv, offset, size, bloomFilter);
-        byte[] buffer = meta.toBytes();
-        DataBlockMeta metaFromBytes = DataBlockMeta.parseFrom(buffer, 0);
-        assertThat(metaFromBytes.getLastKv(), equalTo(lastKv));
-        assertThat(metaFromBytes.getBlockOffset(), equalTo(offset));
-        assertThat(metaFromBytes.getBlockSize(), equalTo(size));
-        assertThat(metaFromBytes.getBloomFilter(), equalTo(bloomFilter));
+        IndexBlock indexBlock = new IndexBlock(lastKv, offset, size, bloomFilter);
+        byte[] buffer = indexBlock.toBytes();
+        IndexBlock indexBlockFromBytes = IndexBlock.parseFrom(buffer, 0);
+        assertThat(indexBlockFromBytes.getLastKv(), equalTo(lastKv));
+        assertThat(indexBlockFromBytes.getBlockOffset(), equalTo(offset));
+        assertThat(indexBlockFromBytes.getBlockSize(), equalTo(size));
+        assertThat(indexBlockFromBytes.getBloomFilter(), equalTo(bloomFilter));
     }
 }

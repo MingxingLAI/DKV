@@ -78,12 +78,12 @@ public final class TailerBlock {
         System.arraycopy(bytes, 0, buf, pos, bytes.length);
         pos += bytes.length;
 
-        // encode data block meta offset(8 bytes)
+        // encode index block offset(8 bytes)
         bytes = Bytes.toBytes(dataBlockMetaOffset);
         System.arraycopy(bytes, 0, buf, pos, bytes.length);
         pos += bytes.length;
 
-        // encode data block meta(8 bytes)
+        // encode index block size(8 bytes)
         bytes = Bytes.toBytes(dataBlockMetaSize);
         System.arraycopy(bytes, 0, buf, pos, bytes.length);
         pos += bytes.length;
@@ -93,7 +93,7 @@ public final class TailerBlock {
         System.arraycopy(bytes, 0, buf, pos, bytes.length);
         return buf;
     }
-
+    
     /**
      * parse tailer block from byte array.
      * @param buf byte buffer
@@ -111,11 +111,11 @@ public final class TailerBlock {
         final int blockCount = Bytes.toInt(Bytes.slice(buf, pos, COUNT_SIZE));
         pos += 4;
         
-        // decode data block meta offset(8 bytes)
+        // decode index block offset(8 bytes)
         final long dataBlockMetaOffset = Bytes.toLong(Bytes.slice(buf, pos, OFFSET_SIZE));
         pos += 8;
         
-        // decode data block meta size(8 bytes)
+        // decode index block size(8 bytes)
         final long dataBlockMetaSize = Bytes.toLong(Bytes.slice(buf, pos, SIZE_SIZE));
         pos += 8;
         

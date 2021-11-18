@@ -26,7 +26,7 @@ import org.apache.dkv.storage.iterator.SeekIterator;
 
 @AllArgsConstructor
 @Getter
-public final class DataBlockMeta implements Comparable<DataBlockMeta> {
+public final class IndexBlock implements Comparable<IndexBlock> {
 
     private static final int OFFSET_SIZE = 8;
     
@@ -43,14 +43,14 @@ public final class DataBlockMeta implements Comparable<DataBlockMeta> {
     private final byte[] bloomFilter;
 
     /**
-     * Only used for {@link SeekIterator} to seek a target block meta. we only care about the lastKV, so
+     * Only used for {@link SeekIterator} to seek a target index block. we only care about the lastKV, so
      * the other fields can be anything.
      *
-     * @param lastKV the last key value to construct the dummy block meta.
-     * @return the dummy block meta.
+     * @param lastKV the last key value to construct the dummy index block.
+     * @return the dummy index block.
      */
-    private static DataBlockMeta createSeekDummy(final KeyValuePair lastKV) {
-        return new DataBlockMeta(lastKV, 0L, 0L, Bytes.EMPTY_BYTES);
+    private static IndexBlock createSeekDummy(final KeyValuePair lastKV) {
+        return new IndexBlock(lastKV, 0L, 0L, Bytes.EMPTY_BYTES);
     }
 
     /**
@@ -100,7 +100,7 @@ public final class DataBlockMeta implements Comparable<DataBlockMeta> {
         return bytes;
     }
 
-    public static DataBlockMeta parseFrom(final byte[] buf, final int offset) throws IOException {
+    public static IndexBlock parseFrom(final byte[] buf, final int offset) throws IOException {
         int pos = offset;
         // Decode last key value.
         KeyValuePair lastKV = KeyValuePair.parseFrom(buf, offset);
@@ -123,11 +123,11 @@ public final class DataBlockMeta implements Comparable<DataBlockMeta> {
         pos += bloomFilterSize;
 
         assert pos <= buf.length;
-        return new DataBlockMeta(lastKV, blockOffset, blockSize, bloomFilter);
+        return new IndexBlock(lastKV, blockOffset, blockSize, bloomFilter);
     }
     
     @Override
-    public int compareTo(final DataBlockMeta o) {
+    public int compareTo(final IndexBlock o) {
         return this.getLastKv().compareTo(o.getLastKv());
     }
 }

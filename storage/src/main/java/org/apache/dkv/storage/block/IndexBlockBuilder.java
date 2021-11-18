@@ -23,29 +23,29 @@ import java.util.List;
 import org.apache.dkv.storage.bean.KeyValuePair;
 
 /**
- * serialize data block meta into bytes.
+ * serialize index block into bytes.
  */
-public class DataBlockMetaBuilder {
+public class IndexBlockBuilder {
     
-    private final List<DataBlockMeta> dataBlockMetas = new ArrayList<>();
+    private final List<IndexBlock> indexBlocks = new ArrayList<>();
     
     private int totalBytes;
 
     /**
-     * append a data block meta into writer.
+     * append a index block into writer.
      * @param lastKv lastKv of data block.
      * @param offset offset in data block.
      * @param size size of data block.
      * @param bloomFilter bloom filter of data block.
      */
     public void append(final KeyValuePair lastKv, final long offset, final long size, final byte[] bloomFilter) {
-        DataBlockMeta meta = new DataBlockMeta(lastKv, offset, size, bloomFilter);
-        dataBlockMetas.add(meta);
-        totalBytes += meta.getSerializeSize();
+        IndexBlock indexBlock = new IndexBlock(lastKv, offset, size, bloomFilter);
+        indexBlocks.add(indexBlock);
+        totalBytes += indexBlock.getSerializeSize();
     }
 
     /**
-     * serialize data block meta into bytes.
+     * serialize index block into bytes.
      * 
      * @return byte array represent DataBlockMeta
      * @throws IOException
@@ -53,10 +53,10 @@ public class DataBlockMetaBuilder {
     public byte[] serialize() throws IOException {
         byte[] buffer = new byte[totalBytes];
         int pos = 0;
-        for (DataBlockMeta meta : dataBlockMetas) {
-            byte[] metaBytes = meta.toBytes();
-            System.arraycopy(metaBytes, 0, buffer, pos, metaBytes.length);
-            pos += metaBytes.length;
+        for (IndexBlock indexBlock : indexBlocks) {
+            byte[] bytes = indexBlock.toBytes();
+            System.arraycopy(bytes, 0, buffer, pos, bytes.length);
+            pos += bytes.length;
         }
         assert pos == totalBytes;
         return buffer;

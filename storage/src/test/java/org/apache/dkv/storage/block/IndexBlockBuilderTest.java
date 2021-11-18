@@ -24,22 +24,22 @@ import org.apache.dkv.storage.bean.KeyValuePair;
 import org.apache.dkv.storage.bytes.Bytes;
 import org.junit.Test;
 
-public class DataBlockMetaBuilderTest {
+public class IndexBlockBuilderTest {
 
     @Test
     public void testDataBlockMetaBuilder() throws IOException {
-        DataBlockMetaBuilder builder = new DataBlockMetaBuilder();
+        IndexBlockBuilder builder = new IndexBlockBuilder();
         builder.append(KeyValuePair.createPut(Bytes.toBytes(1), Bytes.toBytes(1), 1), 100, 100, Bytes.EMPTY_BYTES);
         builder.append(KeyValuePair.createPut(Bytes.toBytes(2), Bytes.toBytes(2), 2), 200, 101, Bytes.EMPTY_BYTES);
     
         byte[] result = builder.serialize();
-        DataBlockMeta meta1 = DataBlockMeta.parseFrom(result, 0);
-        assertThat(meta1.getBlockOffset(), equalTo(100L));
-        assertThat(meta1.getBlockSize(), equalTo(100L));
-        assertThat(meta1.getLastKv(), equalTo(KeyValuePair.createPut(Bytes.toBytes(1), Bytes.toBytes(1), 1)));
-        DataBlockMeta meta2 = DataBlockMeta.parseFrom(result, result.length / 2);
-        assertThat(meta2.getBlockOffset(), equalTo(200L));
-        assertThat(meta2.getBlockSize(), equalTo(101L));
-        assertThat(meta2.getLastKv(), equalTo(KeyValuePair.createPut(Bytes.toBytes(2), Bytes.toBytes(2), 2)));
+        IndexBlock indexBlock1 = IndexBlock.parseFrom(result, 0);
+        assertThat(indexBlock1.getBlockOffset(), equalTo(100L));
+        assertThat(indexBlock1.getBlockSize(), equalTo(100L));
+        assertThat(indexBlock1.getLastKv(), equalTo(KeyValuePair.createPut(Bytes.toBytes(1), Bytes.toBytes(1), 1)));
+        IndexBlock indexBlock2 = IndexBlock.parseFrom(result, result.length / 2);
+        assertThat(indexBlock2.getBlockOffset(), equalTo(200L));
+        assertThat(indexBlock2.getBlockSize(), equalTo(101L));
+        assertThat(indexBlock2.getLastKv(), equalTo(KeyValuePair.createPut(Bytes.toBytes(2), Bytes.toBytes(2), 2)));
     }
 }
