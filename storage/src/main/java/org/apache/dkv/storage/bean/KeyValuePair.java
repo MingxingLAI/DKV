@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Comparator;
 import lombok.Getter;
 import org.apache.dkv.storage.bytes.Bytes;
+import org.apache.dkv.storage.bytes.BytesBuilder;
 
 @Getter
 public final class KeyValuePair implements Comparable<KeyValuePair> {
@@ -96,36 +97,29 @@ public final class KeyValuePair implements Comparable<KeyValuePair> {
     }
 
     public byte[] toBytes() {
-        int rawKeyLen = getRawKeyLen();
-        int pos = 0;
-        byte[] bytes = new byte[getSerializeSize()];
-
+        BytesBuilder builder = new BytesBuilder(getSerializeSize());
         // Encode raw key length
+        int rawKeyLen = getRawKeyLen();
         byte[] rawKeyLenBytes = Bytes.toBytes(rawKeyLen);
-        System.arraycopy(rawKeyLenBytes, 0, bytes, pos, RAW_KEY_LEN_SIZE);
-        pos += RAW_KEY_LEN_SIZE;
-
+        builder.append(rawKeyLenBytes);
+        
         // Encode value length.
         byte[] valLen = Bytes.toBytes(value.length);
-        System.arraycopy(valLen, 0, bytes, pos, VAL_LEN_SIZE);
-        pos += VAL_LEN_SIZE;
-
+        builder.append(valLen);
+        
         // Encode key
-        System.arraycopy(key, 0, bytes, pos, key.length);
-        pos += key.length;
-
+        builder.append(key);
+        
         // Encode Op
-        bytes[pos] = operationType.getCode();
-        pos += 1;
-
+        builder.append(new byte[] {operationType.getCode()});
+        
         // Encode sequenceId
         byte[] seqIdBytes = Bytes.toBytes(sequenceId);
-        System.arraycopy(seqIdBytes, 0, bytes, pos, seqIdBytes.length);
-        pos += seqIdBytes.length;
+        builder.append(seqIdBytes);
 
         // Encode value
-        System.arraycopy(value, 0, bytes, pos, value.length);
-        return bytes;
+        builder.append(value);
+        return builder.getBuffer();
     }
 
     @Override

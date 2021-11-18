@@ -20,6 +20,7 @@ package org.apache.dkv.storage.block;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.dkv.storage.bytes.Bytes;
+import org.apache.dkv.storage.bytes.BytesBuilder;
 
 /**
  * tailer block in SSTable, It's the last block of SSTable.
@@ -65,33 +66,29 @@ public final class TailerBlock {
      * @return byte array represent tailer block.
      */
     public byte[] serialize() {
-        byte[] buf = new byte[TAILER_SIZE];
-        int pos = 0;
+        BytesBuilder builder = new BytesBuilder(TAILER_SIZE);
 
         // encode file size(8 bytes)
         byte[] bytes = Bytes.toBytes(fileSize);
-        System.arraycopy(bytes, 0, buf, pos, bytes.length);
-        pos += bytes.length;
-
+        builder.append(bytes);
+        
         // encode block count(4 bytes)
         bytes = Bytes.toBytes(blockCount);
-        System.arraycopy(bytes, 0, buf, pos, bytes.length);
-        pos += bytes.length;
-
+        builder.append(bytes);
+        
         // encode index block offset(8 bytes)
         bytes = Bytes.toBytes(dataBlockMetaOffset);
-        System.arraycopy(bytes, 0, buf, pos, bytes.length);
-        pos += bytes.length;
-
+        builder.append(bytes);
+        
         // encode index block size(8 bytes)
         bytes = Bytes.toBytes(dataBlockMetaSize);
-        System.arraycopy(bytes, 0, buf, pos, bytes.length);
-        pos += bytes.length;
-
+        builder.append(bytes);
+        
         // encode magic number(8 bytes)
         bytes = Bytes.toBytes(DISK_FILE_MAGIC);
-        System.arraycopy(bytes, 0, buf, pos, bytes.length);
-        return buf;
+        builder.append(bytes);
+
+        return builder.getBuffer();
     }
     
     /**

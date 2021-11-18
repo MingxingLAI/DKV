@@ -22,6 +22,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.dkv.storage.bean.KeyValuePair;
 import org.apache.dkv.storage.bytes.Bytes;
+import org.apache.dkv.storage.bytes.BytesBuilder;
 import org.apache.dkv.storage.iterator.SeekIterator;
 
 @AllArgsConstructor
@@ -67,37 +68,31 @@ public final class IndexBlock implements Comparable<IndexBlock> {
      * @throws IOException
      */
     public byte[] toBytes() throws IOException {
-        byte[] bytes = new byte[getSerializeSize()];
-        int pos = 0;
-
+        BytesBuilder builder = new BytesBuilder(getSerializeSize());
+        
         // encode last kv
         byte[] kvBytes = lastKv.toBytes();
-        System.arraycopy(kvBytes, 0, bytes, pos, kvBytes.length);
-        pos += kvBytes.length;
-
+        builder.append(kvBytes);
+        
         // encode blockOffset
         byte[] offsetBytes = Bytes.toBytes(blockOffset);
-        System.arraycopy(offsetBytes, 0, bytes, pos, offsetBytes.length);
-        pos += offsetBytes.length;
+        builder.append(offsetBytes);
 
         // encode blockSize
         byte[] sizeBytes = Bytes.toBytes(blockSize);
-        System.arraycopy(sizeBytes, 0, bytes, pos, sizeBytes.length);
-        pos += sizeBytes.length;
-
+        builder.append(sizeBytes);
+        
         // encode length of bloom filter
         byte[] bfLenBytes = Bytes.toBytes(bloomFilter.length);
-        System.arraycopy(bfLenBytes, 0, bytes, pos, bfLenBytes.length);
-        pos += bfLenBytes.length;
+        builder.append(bfLenBytes);
         
         // encode bytes of bloom filter
-        System.arraycopy(bloomFilter, 0, bytes, pos, bloomFilter.length);
-        pos += bloomFilter.length;
-
-        if (pos != bytes.length) {
-            throw new IOException("pos(" + pos + ") should be equal to length of bytes (" + bytes.length + ")");
+        builder.append(bloomFilter);
+        
+        if (builder.getPos() != builder.getBuffer().length) {
+            throw new IOException("pos(" + builder.getPos() + ") should be equal to length of bytes (" + builder.getBuffer().length + ")");
         }
-        return bytes;
+        return builder.getBuffer();
     }
 
     public static IndexBlock parseFrom(final byte[] buf, final int offset) throws IOException {

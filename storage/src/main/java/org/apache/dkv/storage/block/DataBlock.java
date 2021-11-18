@@ -26,6 +26,7 @@ import lombok.Data;
 import org.apache.dkv.storage.bean.KeyValuePair;
 import org.apache.dkv.storage.bloom.BloomFilter;
 import org.apache.dkv.storage.bytes.Bytes;
+import org.apache.dkv.storage.bytes.BytesBuilder;
 
 /**
  * build and parse DataBlock.
@@ -132,28 +133,24 @@ public final class DataBlock {
      * @throws IOException if error.
      */
     public byte[] serialize() {
-        byte[] buffer = new byte[getSize()];
-        int pos = 0;
+        BytesBuilder builder = new BytesBuilder(getSize());
 
         // encode count
         byte[] countBytes = Bytes.toBytes(keyValuePairs.size());
-        System.arraycopy(countBytes, 0, buffer, pos, countBytes.length);
-        pos += countBytes.length;
+        builder.append(countBytes);
 
         // Append all the key value
         for (KeyValuePair keyValuePair : keyValuePairs) {
             byte[] kv = keyValuePair.toBytes();
-            System.arraycopy(kv, 0, buffer, pos, kv.length);
-            pos += kv.length;
+            builder.append(kv);
         }
 
         // Append checksum.
         byte[] checksum = Bytes.toBytes(this.getChecksum());
-        System.arraycopy(checksum, 0, buffer, pos, checksum.length);
-        pos += checksum.length;
+        builder.append(checksum);
 
-        assert pos == getSize();
-        return buffer;
+        assert builder.getPos() == getSize();
+        return builder.getBuffer();
     }
 
     /**
