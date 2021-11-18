@@ -119,11 +119,19 @@ public final class DataBlock {
     }
 
     /**
+     * is block has no key value pair.
+     * @return true if there is no any key value pair.
+     */
+    public boolean isEmpty() {
+        return keyValuePairs.size() == 0;
+    }
+
+    /**
      * serialize a data block.
      * @return byte array represent a data block
      * @throws IOException if error.
      */
-    public byte[] serialize() throws IOException {
+    public byte[] serialize() {
         byte[] buffer = new byte[getSize()];
         int pos = 0;
 

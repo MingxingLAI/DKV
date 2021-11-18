@@ -95,7 +95,7 @@ public final class KeyValuePair implements Comparable<KeyValuePair> {
         return key.length + OP_SIZE + SEQ_ID_SIZE;
     }
 
-    public byte[] toBytes() throws IOException {
+    public byte[] toBytes() {
         int rawKeyLen = getRawKeyLen();
         int pos = 0;
         byte[] bytes = new byte[getSerializeSize()];
