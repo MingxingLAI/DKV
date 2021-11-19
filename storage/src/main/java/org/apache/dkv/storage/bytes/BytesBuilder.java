@@ -33,7 +33,7 @@ public final class BytesBuilder {
 
     /**
      * append bytes to buffer.
-     * @param bytes
+     * @param bytes to write.
      */
     public void append(final byte[] bytes) {
         System.arraycopy(bytes, 0, buffer, pos, bytes.length);

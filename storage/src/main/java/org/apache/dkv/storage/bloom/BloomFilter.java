@@ -44,7 +44,7 @@ public final class BloomFilter {
 
     /**
      * check is key in storage.
-     * @param key
+     * @param key to found.
      * @return true if key exists.
      */
     public boolean contains(final byte[] key) {

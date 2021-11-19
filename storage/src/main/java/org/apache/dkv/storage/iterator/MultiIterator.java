@@ -54,7 +54,7 @@ public class MultiIterator implements SeekIterator<KeyValuePair> {
     /**
      * 
      * @param kv seek to specific element.
-     * @throws IOException
+     * @throws IOException IO Exception.
      */
     @Override
     public void seekTo(final KeyValuePair kv) throws IOException {
@@ -80,7 +80,7 @@ public class MultiIterator implements SeekIterator<KeyValuePair> {
     /**
      * 
      * @return next element.
-     * @throws IOException
+     * @throws IOException IO Exception.
      */
     @Override
     public KeyValuePair next() throws IOException {

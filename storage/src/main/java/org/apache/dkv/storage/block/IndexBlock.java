@@ -65,7 +65,7 @@ public final class IndexBlock implements Comparable<IndexBlock> {
     /**
      * convert block to bytes.
      * @return byte array.
-     * @throws IOException
+     * @throws IOException IO Exception.
      */
     public byte[] toBytes() throws IOException {
         BytesBuilder builder = new BytesBuilder(getSerializeSize());

@@ -83,7 +83,7 @@ public final class MemStore {
     /**
      * crate iterator to visit MemStore.
      * @return iterator.
-     * @throws IOException
+     * @throws IOException IO Exception.
      */
     public SeekIterator<KeyValuePair> createIterator() throws IOException {
         return new MemStoreIterator(this);

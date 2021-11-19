@@ -48,7 +48,7 @@ public class IndexBlockBuilder {
      * serialize index block into bytes.
      * 
      * @return byte array represent DataBlockMeta
-     * @throws IOException
+     * @throws IOException IO Exception.
      */
     public byte[] serialize() throws IOException {
         byte[] buffer = new byte[totalBytes];

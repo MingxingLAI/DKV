@@ -28,14 +28,14 @@ public interface Iterator<T> {
     /**
      * 
      * @return true if has next element.
-     * @throws IOException
+     * @throws IOException IO Exception.
      */
     boolean hasNext() throws IOException;
 
     /**
      * 
      * @return element in iterator.
-     * @throws IOException
+     * @throws IOException IO Exception.
      */
     T next() throws IOException;
 }

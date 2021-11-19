@@ -68,10 +68,9 @@ public final class DataBlock {
 
     /**
      * add Key Value into block
-     * @param keyValuePair
-     * @throws IOException
+     * @param keyValuePair to append to data block.
      */
-    public void append(final KeyValuePair keyValuePair) throws IOException {
+    public void append(final KeyValuePair keyValuePair) {
         // update key value buffer
         keyValuePairs.add(keyValuePair);
         lastKv = keyValuePair;
@@ -130,7 +129,6 @@ public final class DataBlock {
     /**
      * serialize a data block.
      * @return byte array represent a data block
-     * @throws IOException if error.
      */
     public byte[] serialize() {
         BytesBuilder builder = new BytesBuilder(getSize());

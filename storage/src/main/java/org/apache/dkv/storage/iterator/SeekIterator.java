@@ -29,6 +29,7 @@ public interface SeekIterator<T> extends Iterator<T> {
      * Seek to the smallest key value which is greater than or equals to the given key value.
      *
      * @param kv seek to specific element.
+     * @throws IOException IO Exception.
      */
     void seekTo(T kv) throws IOException;
 }

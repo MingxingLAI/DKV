@@ -29,6 +29,9 @@ import org.apache.dkv.storage.block.DataBlock;
 import org.apache.dkv.storage.block.IndexBlockBuilder;
 import org.apache.dkv.storage.block.TailerBlock;
 
+/**
+ * SSTable Builder
+ */
 public final class SSTableBuilder implements Closeable {
 
     // TODO Is duplicated define? 
@@ -67,9 +70,9 @@ public final class SSTableBuilder implements Closeable {
     }
 
     /**
-     * append Key value pair into SSTable
-     * @param keyValuePair
-     * @throws IOException
+     * append Key value pair into SSTable.
+     * @param keyValuePair to append to SSTable.
+     * @throws IOException IO Exception.
      */
     public void append(final KeyValuePair keyValuePair) throws IOException {
         if (null == keyValuePair) {
@@ -102,7 +105,7 @@ public final class SSTableBuilder implements Closeable {
 
     /**
      * append index into SSTable.
-     * @throws IOException
+     * @throws IOException IO Exception.
      */
     public void appendIndex() throws IOException {
         // add last Data Block Meta into index
@@ -121,7 +124,7 @@ public final class SSTableBuilder implements Closeable {
 
     /**
      * append tailer into SSTable.
-     * @throws IOException
+     * @throws IOException IO Exception.
      */
     public void appendTailer() throws IOException {
         fileSize = currentOffset + TRAILER_SIZE;
