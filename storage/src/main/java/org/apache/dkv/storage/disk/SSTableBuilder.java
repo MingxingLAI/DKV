@@ -34,7 +34,7 @@ import org.apache.dkv.storage.block.TailerBlock;
  */
 public final class SSTableBuilder implements Closeable {
 
-    public static final int BLOCK_SIZE_UP_LIMIT = 1024 * 1024 * 2;
+    private static final int BLOCK_SIZE_UP_LIMIT = 1024 * 1024 * 2;
 
     private long currentOffset;
     

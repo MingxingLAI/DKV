@@ -36,17 +36,17 @@ import org.apache.dkv.storage.iterator.SeekIterator;
 public final class SSTableReader implements Closeable {
     
     @Getter
-    private String fileName;
+    private final String fileName;
     
-    private long fileSize;
-    
-    @Getter
-    private TailerBlock tailerBlock;
-    
-    private RandomAccessFile in;
+    private final long fileSize;
     
     @Getter
-    private SortedSet<IndexBlock> indexBlocks;
+    private final TailerBlock tailerBlock;
+    
+    private final RandomAccessFile in;
+    
+    @Getter
+    private final SortedSet<IndexBlock> indexBlocks;
 
     /**
      * open a SSTable file, read it's tailer block and index blocks.
