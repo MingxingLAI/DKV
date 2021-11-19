@@ -47,17 +47,17 @@ public final class TailerBlock {
     
     private final int blockCount;
     
-    private final long dataBlockMetaOffset;
+    private final long indexBlockOffset;
     
-    private final long dataBlockMetaSize;
+    private final long indexBlockSize;
     
     private final long magicNumber;
     
-    public TailerBlock(final long fileSize, final int blockCount, final long dataBlockMetaOffset, final long dataBlockMetaSize) {
+    public TailerBlock(final long fileSize, final int blockCount, final long indexBlockOffset, final long indexBlockSize) {
         this.fileSize = fileSize;
         this.blockCount = blockCount;
-        this.dataBlockMetaOffset = dataBlockMetaOffset;
-        this.dataBlockMetaSize = dataBlockMetaSize;
+        this.indexBlockOffset = indexBlockOffset;
+        this.indexBlockSize = indexBlockSize;
         this.magicNumber = DISK_FILE_MAGIC;
     }
 
@@ -77,11 +77,11 @@ public final class TailerBlock {
         builder.append(bytes);
         
         // encode index block offset(8 bytes)
-        bytes = Bytes.toBytes(dataBlockMetaOffset);
+        bytes = Bytes.toBytes(indexBlockOffset);
         builder.append(bytes);
         
         // encode index block size(8 bytes)
-        bytes = Bytes.toBytes(dataBlockMetaSize);
+        bytes = Bytes.toBytes(indexBlockSize);
         builder.append(bytes);
         
         // encode magic number(8 bytes)
@@ -118,7 +118,8 @@ public final class TailerBlock {
         
         // decode magic number(8 bytes)
         final long magicNumber = Bytes.toLong(Bytes.slice(buf, pos, MAGIC_SIZE));
-        
+        assert DISK_FILE_MAGIC == magicNumber;
+
         return new TailerBlock(fileSize, blockCount, dataBlockMetaOffset, dataBlockMetaSize, magicNumber);
     }
 }

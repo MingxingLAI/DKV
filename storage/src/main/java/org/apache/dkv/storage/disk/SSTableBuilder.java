@@ -34,10 +34,7 @@ import org.apache.dkv.storage.block.TailerBlock;
  */
 public final class SSTableBuilder implements Closeable {
 
-    // TODO Is duplicated define? 
     public static final int BLOCK_SIZE_UP_LIMIT = 1024 * 1024 * 2;
-
-    public static final int TRAILER_SIZE = 8 + 4 + 8 + 8 + 8;
 
     private long currentOffset;
     
@@ -53,8 +50,11 @@ public final class SSTableBuilder implements Closeable {
     private final FileOutputStream outputStream;
 
     @Getter
-    private int blockCount = 1;
-    
+    private int blockCount;
+
+    @Getter
+    private TailerBlock tailerBlock;
+            
     private long dataBlockMetaOffset;
     
     private long dataBlockMetaSize;
@@ -108,8 +108,8 @@ public final class SSTableBuilder implements Closeable {
      * @throws IOException IO Exception.
      */
     public void appendIndex() throws IOException {
-        // add last Data Block Meta into index
-        if (currentDataBlock.isEmpty()) {
+        // add last Data Block into index
+        if (!currentDataBlock.isEmpty()) {
             switchNextDataBlock();
         }
         
@@ -127,8 +127,8 @@ public final class SSTableBuilder implements Closeable {
      * @throws IOException IO Exception.
      */
     public void appendTailer() throws IOException {
-        fileSize = currentOffset + TRAILER_SIZE;
-        TailerBlock tailerBlock = new TailerBlock(fileSize, blockCount, dataBlockMetaOffset, dataBlockMetaSize);
+        fileSize = currentOffset + TailerBlock.TAILER_SIZE;
+        tailerBlock = new TailerBlock(fileSize, blockCount, dataBlockMetaOffset, dataBlockMetaSize);
         outputStream.write(tailerBlock.serialize());
     }
     

@@ -30,8 +30,8 @@ public class TailerBlockTest {
         
         assertThat(tailerBlock2.getFileSize(), equalTo(tailerBlock1.getFileSize()));
         assertThat(tailerBlock2.getBlockCount(), equalTo(tailerBlock1.getBlockCount()));
-        assertThat(tailerBlock2.getDataBlockMetaOffset(), equalTo(tailerBlock1.getDataBlockMetaOffset()));
-        assertThat(tailerBlock2.getDataBlockMetaSize(), equalTo(tailerBlock1.getDataBlockMetaSize()));
+        assertThat(tailerBlock2.getIndexBlockOffset(), equalTo(tailerBlock1.getIndexBlockOffset()));
+        assertThat(tailerBlock2.getIndexBlockSize(), equalTo(tailerBlock1.getIndexBlockSize()));
         assertThat(tailerBlock2.getMagicNumber(), equalTo(tailerBlock1.getMagicNumber()));
     }
 }

@@ -50,7 +50,7 @@ public final class IndexBlock implements Comparable<IndexBlock> {
      * @param lastKV the last key value to construct the dummy index block.
      * @return the dummy index block.
      */
-    private static IndexBlock createSeekDummy(final KeyValuePair lastKV) {
+    public static IndexBlock createSeekDummy(final KeyValuePair lastKV) {
         return new IndexBlock(lastKV, 0L, 0L, Bytes.EMPTY_BYTES);
     }
 
