@@ -32,7 +32,7 @@ import org.apache.dkv.storage.util.FileUtil;
 @Slf4j
 public final class DefaultCompactor implements Compactor {
     
-    private DiskStorage diskStorage;
+    private final DiskStorage diskStorage;
     
     private volatile boolean running = true;
     

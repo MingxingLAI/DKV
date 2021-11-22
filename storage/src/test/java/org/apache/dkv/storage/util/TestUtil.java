@@ -17,12 +17,21 @@
 
 package org.apache.dkv.storage.util;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.stream.Collectors;
 import org.apache.dkv.storage.bean.KeyValuePair;
 import org.apache.dkv.storage.bytes.Bytes;
+import org.apache.dkv.storage.disk.DiskStorage;
+import org.apache.dkv.storage.flush.DefaultFlusher;
+import org.apache.dkv.storage.flush.Flusher;
+import org.apache.dkv.storage.iterator.MemStoreIterator;
+import org.apache.dkv.storage.memory.MemStore;
 
 /**
  * utility for unit test
@@ -42,5 +51,25 @@ public class TestUtil {
         }
         return result;
     }
-    
+
+    /**
+     * create SSTable
+     * @param diskStorage disk storage
+     * @throws IOException IO Exception
+     */
+    public static void createSSTables(final DiskStorage diskStorage) throws IOException {
+        Flusher flusher = new DefaultFlusher(diskStorage);
+        MemStoreIterator memStoreIterator = createNewMemStore(Arrays.asList("1", "3", "5"), Arrays.asList("2", "4", "6"));
+        flusher.flush(memStoreIterator);
+
+        memStoreIterator = createNewMemStore(Arrays.asList("a", "c", "e"), Arrays.asList("b", "d", "f"));
+        flusher.flush(memStoreIterator);
+    }
+
+    private static MemStoreIterator createNewMemStore(final List<String> data, final List<String> snapshot) throws IOException {
+        final MemStore memStore = mock(MemStore.class);
+        when(memStore.getKvMap()).thenReturn(TestUtil.createKeyValuePairMap(data));
+        when(memStore.getSnapshot()).thenReturn(TestUtil.createKeyValuePairMap(snapshot));
+        return new MemStoreIterator(memStore);
+    }
 }
