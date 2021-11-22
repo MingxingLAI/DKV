@@ -51,7 +51,7 @@ public class MemStoreTest {
     @Test
     public void testMemStoreIterator() throws IOException {
         MemStore memStore = createMemStore();
-        SeekIterator<KeyValuePair> iterator = memStore.createIterator();
+        SeekIterator<KeyValuePair> iterator = memStore.iterator();
         int count = 0;
         while (iterator.hasNext()) {
             iterator.next();

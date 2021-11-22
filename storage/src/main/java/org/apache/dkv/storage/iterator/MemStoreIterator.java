@@ -11,7 +11,7 @@ import org.apache.dkv.storage.memory.MemStore;
 
 public final class MemStoreIterator implements SeekIterator<KeyValuePair> {
 
-    private MultiIterator iterator;
+    private final MultiIterator iterator;
 
     public MemStoreIterator(final MemStore memStore) throws IOException {
         List<IteratorWrapper> inputs = new ArrayList<>(2);

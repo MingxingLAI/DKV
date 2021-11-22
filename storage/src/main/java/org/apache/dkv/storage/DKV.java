@@ -130,7 +130,7 @@ public final class DKV implements Closeable {
      */
     public Iterator<KeyValuePair> scan(final byte[] start, final byte[] stop) throws IOException {
         List<SeekIterator<KeyValuePair>> iterators = new ArrayList<>();
-        iterators.add(memStore.createIterator());
+        iterators.add(memStore.iterator());
         iterators.add(diskStorage.iterator());
 
         MultiIterator multiIterator = new MultiIterator(iterators);

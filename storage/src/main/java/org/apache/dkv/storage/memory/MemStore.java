@@ -86,7 +86,7 @@ public final class MemStore implements Closeable {
      * @return iterator.
      * @throws IOException IO Exception.
      */
-    public SeekIterator<KeyValuePair> createIterator() throws IOException {
+    public SeekIterator<KeyValuePair> iterator() throws IOException {
         return new MemStoreIterator(this);
     }
     
