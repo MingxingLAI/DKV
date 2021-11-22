@@ -38,7 +38,7 @@ public class MultiIterator implements SeekIterator<KeyValuePair> {
     public MultiIterator(final SeekIterator<KeyValuePair>[] iterators) throws IOException {
         assert iterators != null;
         this.iterators = iterators;
-        this.queue = new PriorityQueue<>(iterators.length, Comparator.comparing(SortItem::getKeyValuePair));
+        this.queue = new PriorityQueue<>(Comparator.comparing(SortItem::getKeyValuePair));
         for (SeekIterator<KeyValuePair> iterator : iterators) {
             // Only add iterator into queue when this iterator is not empty
             if (null != iterator && iterator.hasNext()) {

@@ -17,6 +17,7 @@
 
 package org.apache.dkv.storage.memory;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ExecutorService;
@@ -33,7 +34,7 @@ import org.apache.dkv.storage.iterator.MemStoreIterator;
 import org.apache.dkv.storage.iterator.SeekIterator;
 
 @Slf4j
-public final class MemStore {
+public final class MemStore implements Closeable {
     
     @Getter
     private final AtomicLong dataSize = new AtomicLong();
@@ -99,7 +100,12 @@ public final class MemStore {
             }
         }
     }
-    
+
+    @Override
+    public void close() {
+        
+    }
+
     private class FlusherTask implements Runnable {
 
         @Override
