@@ -15,21 +15,18 @@
  * limitations under the License.
  */
 
-package org.apache.dkv.storage.flush;
+package org.apache.dkv.storage.compact;
 
 import java.io.IOException;
-import org.apache.dkv.storage.bean.KeyValuePair;
-import org.apache.dkv.storage.iterator.Iterator;
 
 /**
- * Flusher
+ * interface for compactor
  */
-public interface Flusher {
+public interface Compactor extends Runnable {
 
     /**
-     * flush MemTable to SSTable
-     * @param iterator iterator to traverse MemTable
-     * @throws IOException IO Exception
+     * compact SSTable files.
+     * @throws IOException IO Exception.
      */
-    void flush(Iterator<KeyValuePair> iterator) throws IOException;
+    void compact() throws IOException;
 }

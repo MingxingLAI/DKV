@@ -31,9 +31,9 @@ import org.apache.dkv.storage.block.TailerBlock;
 import org.apache.dkv.storage.iterator.SeekIterator;
 
 /**
- * SSTable reader to read a SSTable file.
+ * SSTable object, It's read a SSTable file.
  */
-public final class SSTableReader implements Closeable {
+public final class SSTable implements Closeable {
     
     @Getter
     private final String fileName;
@@ -53,7 +53,7 @@ public final class SSTableReader implements Closeable {
      * @param fileName file name ready to read
      * @throws IOException IO Exception.
      */
-    public SSTableReader(final String fileName) throws IOException {
+    public SSTable(final String fileName) throws IOException {
         this.fileName = fileName;
         File f = new File(fileName);
         this.fileSize = f.length();

@@ -15,21 +15,26 @@
  * limitations under the License.
  */
 
-package org.apache.dkv.storage.flush;
+package org.apache.dkv.storage.util;
 
+import java.io.File;
 import java.io.IOException;
-import org.apache.dkv.storage.bean.KeyValuePair;
-import org.apache.dkv.storage.iterator.Iterator;
 
 /**
- * Flusher
+ * file utility.
  */
-public interface Flusher {
+public class FileUtil {
 
     /**
-     * flush MemTable to SSTable
-     * @param iterator iterator to traverse MemTable
+     * rename file.
+     * @param sourceFileName source file
+     * @param toFileName to file
      * @throws IOException IO Exception
      */
-    void flush(Iterator<KeyValuePair> iterator) throws IOException;
+    public static void rename(final String sourceFileName, final String toFileName) throws IOException {
+        File f = new File(sourceFileName);
+        if (!f.renameTo(new File(toFileName))) {
+            throw new IOException("Rename " + sourceFileName + " to " + toFileName + " failed when flushing");
+        }
+    }
 }

@@ -19,7 +19,6 @@ package org.apache.dkv.storage.disk;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -68,11 +67,11 @@ public class SSTableTest {
     }
     
     @Test
-    public void testSSTableReader() throws IOException {
+    public void testSSTable() throws IOException {
         SSTableBuilder builder = initSSTable();
-        SSTableReader reader = new SSTableReader(fileName);
-        assertTailerBlock(reader.getTailerBlock(), builder.getTailerBlock());
-        SeekIterator<KeyValuePair> iterator = reader.iterator();
+        SSTable table = new SSTable(fileName);
+        assertTailerBlock(table.getTailerBlock(), builder.getTailerBlock());
+        SeekIterator<KeyValuePair> iterator = table.iterator();
         int count = 0;
         KeyValuePair lastKeyValuePair = null;
         while (iterator.hasNext()) {
@@ -81,8 +80,8 @@ public class SSTableTest {
         }
         // how many elements.
         assertThat(count, equalTo(10000));
-        assertThat(reader.getTailerBlock().getBlockCount(), equalTo(reader.getIndexBlocks().size()));
-        assertThat(reader.getIndexBlocks().last().getLastKv(), equalTo(lastKeyValuePair));
+        assertThat(table.getTailerBlock().getBlockCount(), equalTo(table.getIndexBlocks().size()));
+        assertThat(table.getIndexBlocks().last().getLastKv(), equalTo(lastKeyValuePair));
     }
     
     @Test
@@ -94,8 +93,8 @@ public class SSTableTest {
         builder.appendIndex();
         builder.appendTailer();
 
-        SSTableReader reader = new SSTableReader(fileName);
-        SeekIterator<KeyValuePair> iterator = reader.iterator();
+        SSTable table = new SSTable(fileName);
+        SeekIterator<KeyValuePair> iterator = table.iterator();
         iterator.seekTo(KeyValuePair.createPut(Bytes.toBytes(49), Bytes.toBytes(49), 1L));
         // 40
         iterator.next();

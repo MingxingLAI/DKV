@@ -11,3 +11,4 @@ Distributed key-value database
 * Using Block Cache to improve read operation
 * Use yaml file to store config
 * Use varint to save disk space
+* Use chunk and chunk pool to reduce gc
