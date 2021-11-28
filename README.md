@@ -1,5 +1,7 @@
 # DKV
 
+[![Java CI with Maven](https://github.com/MingxingLAI/DKV/actions/workflows/maven.yml/badge.svg)](https://github.com/MingxingLAI/DKV/actions/workflows/maven.yml)
+
 Distributed key-value database
 
 # TODO List
