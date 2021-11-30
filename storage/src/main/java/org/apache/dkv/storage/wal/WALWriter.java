@@ -31,10 +31,9 @@ import org.apache.dkv.storage.config.Config;
  */
 public final class WALWriter {
 
-    private static final String WAL_SUFFIX = ".wal";
-
-    private static final Pattern DATA_FILE_RE = Pattern.compile("dkv([0-9]+)\\.wal");
+    private static final Pattern WAL_FILE_RE = Pattern.compile("dkv([0-9]+)\\.wal");
     
+    @Getter
     private static final int MAX_BLOCK_SIZE = 32768;
 
     // Header is checksum (4 bytes), length (2 bytes), type (1 byte).
@@ -70,7 +69,7 @@ public final class WALWriter {
         File[] files = getAllTableFiles();
         int maxFileId = -1;
         for (File f : files) {
-            Matcher matcher = DATA_FILE_RE.matcher(f.getName());
+            Matcher matcher = WAL_FILE_RE.matcher(f.getName());
             if (matcher.matches()) {
                 maxFileId = Math.max(Integer.parseInt(matcher.group(1)), maxFileId);
             }
@@ -92,7 +91,7 @@ public final class WALWriter {
 
     private File[] getAllTableFiles() {
         File dir = new File(this.dataDir);
-        return dir.listFiles(each -> DATA_FILE_RE.matcher(each.getName()).matches());
+        return dir.listFiles(each -> WAL_FILE_RE.matcher(each.getName()).matches());
     }
     
     /**
@@ -108,7 +107,7 @@ public final class WALWriter {
             int leftover = MAX_BLOCK_SIZE - blockOffset;
             assert leftover >= 0;
             if (leftover < HEADER_SIZE) {
-                switchWALFile(leftover);
+                switchNewBlock(leftover);
             }
             // Invariant: we never leave < kHeaderSize bytes in a block.
             int avail = MAX_BLOCK_SIZE - blockOffset - HEADER_SIZE;
@@ -148,7 +147,7 @@ public final class WALWriter {
         blockOffset += HEADER_SIZE + length;
     }
     
-    private void switchWALFile(final int leftover) throws IOException {
+    private void switchNewBlock(final int leftover) throws IOException {
         // switch to a new block
         if (leftover > 0) {
             out.write(new byte[HEADER_SIZE], 0, leftover);
@@ -160,7 +159,7 @@ public final class WALWriter {
      * switch to next wal file.
      * @throws IOException IO Exception.
      */
-    public synchronized void switchNextWALFile() throws IOException {
+    public synchronized void switchNewFile() throws IOException {
         out.close();
         File f = new File(getNexTableFileName());
         assert f.createNewFile();

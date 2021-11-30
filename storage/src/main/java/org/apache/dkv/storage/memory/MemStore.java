@@ -123,7 +123,7 @@ public final class MemStore implements Closeable {
                 kvMap = new ConcurrentSkipListMap<>();
                 dataSize.set(0);
                 // switch to next wal file
-                walWriter.switchNextWALFile();
+                walWriter.switchNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
