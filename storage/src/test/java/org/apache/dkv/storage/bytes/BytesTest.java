@@ -62,4 +62,12 @@ public final class BytesTest {
         assertThat(Bytes.compare(new byte[]{0x00}, null), equalTo(1));
         assertThat(Bytes.compare(new byte[]{0x00}, new byte[]{0x01}), equalTo(-1));
     }
+    
+    @Test
+    public void testTwoBytesToInt() {
+        int max = 1 << 15;
+        for (int i = 0; i < max; i++) {
+            assertThat(Bytes.twoBytesToInt(Bytes.toTwoBytes(i)), equalTo(i));
+        }
+    }
 }

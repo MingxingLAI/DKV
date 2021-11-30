@@ -30,9 +30,23 @@ import org.apache.dkv.storage.bytes.Bytes;
 import org.apache.dkv.storage.config.Config;
 import org.apache.dkv.storage.flush.Flusher;
 import org.apache.dkv.storage.iterator.SeekIterator;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public class MemStoreTest {
+
+    private final TemporaryFolder folder = new TemporaryFolder();
+    
+    @Before
+    public void setUp() {
+        try {
+            folder.create();
+        } catch (IOException ioe) {
+            System.err.println("error creating temporary test file in " + this.getClass().getSimpleName());
+        }
+    }
     
     @Test
     public void testMemStoreAdd() throws IOException {
@@ -64,12 +78,17 @@ public class MemStoreTest {
         ExecutorService executorService = mock(ExecutorService.class);
         when(executorService.submit(any(Runnable.class))).thenReturn(null);
         Flusher flusher = mock(Flusher.class);
-        MemStore memStore = new MemStore(Config.builder().maxMemstoreSize(100).build(), flusher, executorService);
+        MemStore memStore = new MemStore(Config.builder().dataDir(folder.getRoot().getAbsolutePath()).maxMemstoreSize(100).build(), flusher, executorService);
         memStore.add(KeyValuePair.create(Bytes.toBytes(1), Bytes.toBytes(1), OperationType.Put, 1));
         assertThat(memStore.getDataSize().get(), equalTo(25L));
         memStore.add(KeyValuePair.create(Bytes.toBytes(2), Bytes.toBytes(2), OperationType.Put, 2));
         memStore.add(KeyValuePair.create(Bytes.toBytes(3), Bytes.toBytes(3), OperationType.Put, 3));
         memStore.add(KeyValuePair.create(Bytes.toBytes(4), Bytes.toBytes(4), OperationType.Put, 4));
         return memStore;
+    }
+    
+    @After
+    public void tearDown() {
+        folder.delete();
     }
 }

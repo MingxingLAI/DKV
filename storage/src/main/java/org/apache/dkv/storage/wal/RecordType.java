@@ -15,36 +15,46 @@
  * limitations under the License.
  */
 
-package org.apache.dkv.storage.config;
+package org.apache.dkv.storage.wal;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.apache.dkv.storage.wal.WriteOptions;
+import lombok.Getter;
 
-@Builder
-@Data
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+// WAL log type
 @AllArgsConstructor
-public class Config {
+@Getter
+public enum RecordType {
+    
+    // Zero is preserved for preallocated files
+    ZeroType((byte) 0),
+    
+    FullType((byte) 1),
+    
+    FirstType((byte) 2),
+    
+    MiddleType((byte) 3),
+    
+    LastType((byte) 4);
 
-    private static final Config DEFAULT = new Config();
-
-    private long maxMemstoreSize = 16 * 1024 * 1024;
+    @Getter
+    private static final int MAX_RECORD_TYPE = LastType.code;
     
-    private int flushMaxRetries = 10;
+    private final byte code;
     
-    private String dataDir = "dkv";
-    
-    private int maxDiskFiles = 10;
-    
-    private int maxThreadPoolSize = 5;
-    
-    private WriteOptions writeOptions;
-    
-    public static Config getDefault() {
-        return DEFAULT;
+    public static RecordType convertCodeToRecordType(final byte code) {
+        switch (code) {
+            case 0:
+                return ZeroType;
+            case 1:
+                return FullType;
+            case 2:
+                return FirstType;
+            case 3:
+                return MiddleType;
+            case 4:
+                return LastType;
+            default:
+                throw new IllegalArgumentException("Unknown code: " + code);
+        }
     }
 }

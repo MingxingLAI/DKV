@@ -28,6 +28,7 @@ import java.util.List;
 import org.apache.dkv.storage.bean.KeyValuePair;
 import org.apache.dkv.storage.iterator.SeekIterator;
 import org.apache.dkv.storage.util.TestUtil;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -115,5 +116,10 @@ public class DiskStorageTest {
             count++;
         }
         assertThat(count, equalTo(12));
+    }
+    
+    @After
+    public void tearDown() {
+        folder.delete();
     }
 }

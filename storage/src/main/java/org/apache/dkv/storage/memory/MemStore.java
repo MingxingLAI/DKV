@@ -32,6 +32,7 @@ import org.apache.dkv.storage.flush.Flusher;
 import org.apache.dkv.storage.iterator.IteratorWrapper;
 import org.apache.dkv.storage.iterator.MemStoreIterator;
 import org.apache.dkv.storage.iterator.SeekIterator;
+import org.apache.dkv.storage.wal.WALWriter;
 
 @Slf4j
 public final class MemStore implements Closeable {
@@ -55,13 +56,16 @@ public final class MemStore implements Closeable {
     
     private final Flusher flusher;
     
-    public MemStore(final Config conf, final Flusher flusher, final ExecutorService pool) {
+    private final WALWriter walWriter;
+    
+    public MemStore(final Config conf, final Flusher flusher, final ExecutorService pool) throws IOException {
         this.conf = conf;
         this.flusher = flusher;
         this.pool = pool;
         dataSize.set(0);
         kvMap = new ConcurrentSkipListMap<>();
         this.snapshot = null;
+        this.walWriter = new WALWriter(conf);
     }
     
     public void add(final KeyValuePair kv) throws IOException {
@@ -69,6 +73,9 @@ public final class MemStore implements Closeable {
         try {
             updateLock.readLock().lock();
             KeyValuePair prevKeyValuePair;
+            // write wal log
+            walWriter.addRecord(kv.toBytes());
+            walWriter.sync();
             if ((prevKeyValuePair = kvMap.put(kv, kv)) == null) {
                 dataSize.addAndGet(kv.getSerializeSize());
             } else {
@@ -115,6 +122,10 @@ public final class MemStore implements Closeable {
                 snapshot = kvMap;
                 kvMap = new ConcurrentSkipListMap<>();
                 dataSize.set(0);
+                // switch to next wal file
+                walWriter.switchNextWALFile();
+            } catch (IOException e) {
+                e.printStackTrace();
             } finally {
                 updateLock.writeLock().unlock();
             }

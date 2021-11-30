@@ -15,36 +15,20 @@
  * limitations under the License.
  */
 
-package org.apache.dkv.storage.config;
+package org.apache.dkv.storage.wal;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.apache.dkv.storage.wal.WriteOptions;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import org.junit.Test;
 
-@Builder
-@Data
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-@AllArgsConstructor
-public class Config {
+public class RecordHeaderTest {
 
-    private static final Config DEFAULT = new Config();
-
-    private long maxMemstoreSize = 16 * 1024 * 1024;
-    
-    private int flushMaxRetries = 10;
-    
-    private String dataDir = "dkv";
-    
-    private int maxDiskFiles = 10;
-    
-    private int maxThreadPoolSize = 5;
-    
-    private WriteOptions writeOptions;
-    
-    public static Config getDefault() {
-        return DEFAULT;
+    @Test
+    public void testRecordHeader() {
+        RecordHeader recordHeader = new RecordHeader(334876, RecordType.FirstType, 100);
+        RecordHeader actual = RecordHeader.parseFrom(recordHeader.serialize(), 0);
+        assertThat(actual.getChecksum(), equalTo(recordHeader.getChecksum()));
+        assertThat(actual.getType(), equalTo(recordHeader.getType()));
+        assertThat(actual.getLength(), equalTo(recordHeader.getLength()));
     }
 }

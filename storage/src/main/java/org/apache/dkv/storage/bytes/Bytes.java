@@ -19,6 +19,7 @@ package org.apache.dkv.storage.bytes;
 
 import com.google.common.base.Preconditions;
 import java.nio.charset.StandardCharsets;
+import org.apache.dkv.storage.wal.RecordType;
 
 public final class Bytes {
 
@@ -28,6 +29,12 @@ public final class Bytes {
 
     public static byte[] toBytes(final byte b) {
         return new byte[]{b};
+    }
+    
+    public static byte[] toBytes(final RecordType type) {
+        byte[] b = new byte[1];
+        b[0] = (byte) (type.getCode() & 0xFF);
+        return b;
     }
 
     public static byte[] toBytes(final String s) {
@@ -66,6 +73,20 @@ public final class Bytes {
         System.arraycopy(a, 0, result, 0, a.length);
         System.arraycopy(b, 0, result, a.length, b.length);
         return result;
+    }
+    
+    public static byte[] toTwoBytes(final int x) {
+        assert x <= 0xFFFF;
+        byte[] b = new byte[2];
+        b[1] = (byte) (x & 0xFF);
+        b[0] = (byte) ((x >> 8) & 0xFF);
+        return b;
+    }
+    
+    public static int twoBytesToInt(final byte[] buf) {
+        int firstByte = (buf[0] << 8) & 0x0000FF00;
+        int secondByte = (buf[1]) & 0x000000FF;
+        return firstByte | secondByte;
     }
     
     public static String toHex(final byte[] buf) {
